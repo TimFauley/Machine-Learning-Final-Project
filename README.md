@@ -1,19 +1,13 @@
 # Machine Learning Final Project
 
-Wright State University, Fall 2026.
+Code and data for my Machine Learning final project (CS 7830, Wright State University, Fall 2026).
 
 ## Layout
 
-- `paper/` — IEEE conference paper (LaTeX, `IEEEtran`), matching `docs/paper_template-finalProject.docx`
 - `src/` — model and training code
 - `notebooks/` — EDA and experiments
-- `data/` — local datasets (git-ignored)
-- `docs/` — course-provided templates and handouts
+- `data/` — dataset (or download instructions if it is too large for git)
 
-## Building the paper
+## Setup
 
-```sh
-cd paper && latexmk -pdf main.tex
-```
-
-Or upload the `paper/` folder to Overleaf.
+_Coming soon._

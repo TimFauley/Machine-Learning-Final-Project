@@ -1,3 +1,6 @@
+# Paper lives in its own private repo (Machine-Learning-Final-Project-Paper)
+paper/
+
 # macOS / Office
 .DS_Store
 ~$*
@@ -10,25 +13,10 @@ venv/
 .ipynb_checkpoints/
 .env
 
-# Data and model artifacts (keep large files out of git)
-data/*
-!data/.gitkeep
+# Model artifacts and run logs
 *.pt
 *.pth
 *.ckpt
 *.h5
 wandb/
 runs/
-
-# LaTeX build artifacts
-*.aux
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
-*.log
-*.out
-*.synctex.gz
-*.toc
-paper/build/
-paper/
