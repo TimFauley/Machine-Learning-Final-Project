@@ -1,15 +1,10 @@
-# Machine Learning Final Project — Human Activity Recognition
+# Human Activity Recognition
 
-Code and data for my CS 7830 Machine Learning final project (Wright State University, Fall 2026).
+Code and data for CS 7830 Machine Learning final project
 
 **Dataset:** [Human Activity Recognition Using Smartphones](https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones)
 (UCI ML Repository #240; Anguita et al., ESANN 2013) — 10,299 windows of smartphone
-accelerometer/gyroscope features (561 per window) from 30 subjects performing 6 activities,
-pre-split by subject into 7,352 train / 2,947 test windows.
-
-**Goal:** six-class activity classification with regularized one-vs-all logistic regression,
-evaluated with a confusion matrix and precision/recall/F1 on the held-out subjects, plus an
-unsupervised look at the feature space (PCA, K-means / fuzzy C-means).
+accelerometer/gyroscope features (561 per window) from 30 subjects performing 6 activities.
 
 ## Layout
 
