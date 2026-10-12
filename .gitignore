@@ -19,6 +19,6 @@ venv/
 wandb/
 runs/
 
-# Dataset (downloaded by src/download_data.py)
-data/UCI HAR Dataset/
-data/*.zip
+# Dataset (downloaded by src/download_data.py) -- track only data/.gitkeep
+data/*
+!data/.gitkeep
