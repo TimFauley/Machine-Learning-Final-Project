@@ -1,5 +1,3 @@
-# Paper lives in its own private repo (Machine-Learning-Final-Project-Paper)
-paper/
 
 # macOS / Office
 .DS_Store
@@ -20,3 +18,7 @@ venv/
 *.h5
 wandb/
 runs/
+
+# Dataset (downloaded by src/download_data.py)
+data/UCI HAR Dataset/
+data/*.zip
