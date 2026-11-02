@@ -8,15 +8,16 @@ accelerometer/gyroscope features (561 per window) from 30 subjects performing 6 
 
 ## Layout
 
-- `src/` — model and training code
-- `notebooks/` — EDA and experiments
+- `src/` — model and training code (`har_data.py` loads the dataset)
+- `notebooks/` — EDA and experiments (`01_eda.ipynb`)
+- `figures/` — saved figures (PDF + PNG)
 - `data/` — dataset (not committed; see below)
 
 ## Setup
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install numpy pandas scikit-learn matplotlib jupyter
+pip install -r requirements.txt
 python src/download_data.py        # fetches and unzips the UCI HAR dataset into data/
 ```
 
