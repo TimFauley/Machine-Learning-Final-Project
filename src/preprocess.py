@@ -13,7 +13,7 @@ into a sklearn Pipeline later, so it can be refit inside every cross-validation 
     T_train = prep.fit_transform(X_train)   # fit on train
     T_test = prep.transform(X_test)          # apply to test
 
-Everything marked TODO is mine to implement (NumPy / pandas only, no sklearn inside).
+Numerical implementations use NumPy / pandas; sklearn supplies estimator plumbing.
 notebooks/02_preprocessing_pca.ipynb checks each piece against scikit-learn.
 """
 from __future__ import annotations
@@ -28,8 +28,7 @@ def remap_labels(y: pd.Series) -> np.ndarray:
 
     Returns a 1-D integer NumPy array.
     """
-    # TODO
-    raise NotImplementedError
+    return np.asarray(y, dtype=int) - 1
 
 
 class DropDuplicateColumns(BaseEstimator, TransformerMixin):
@@ -42,13 +41,18 @@ class DropDuplicateColumns(BaseEstimator, TransformerMixin):
     """
 
     def fit(self, X: pd.DataFrame, y=None):
-        # TODO
-        raise NotImplementedError
+        self.keep_ = []
+        self.dropped_ = {}
+        for col in X.columns:
+            original = next((old for old in self.keep_ if X[col].equals(X[old])), None)
+            if original is None:
+                self.keep_.append(col)
+            else:
+                self.dropped_[col] = original
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        # TODO
-        raise NotImplementedError
+        return X.loc[:, self.keep_]
 
 
 class Standardizer(BaseEstimator, TransformerMixin):
@@ -67,13 +71,14 @@ class Standardizer(BaseEstimator, TransformerMixin):
         self.with_std = with_std
 
     def fit(self, X, y=None):
-        # TODO
-        raise NotImplementedError
+        X = np.asarray(X, dtype=float)
+        self.mean_ = X.mean(axis=0)
+        self.std_ = X.std(axis=0, ddof=0) if self.with_std else np.ones(X.shape[1])
+        self.std_[self.std_ == 0] = 1.0
         return self
 
     def transform(self, X) -> np.ndarray:
-        # TODO
-        raise NotImplementedError
+        return (np.asarray(X, dtype=float) - self.mean_) / self.std_
 
 
 class PCA(BaseEstimator, TransformerMixin):
@@ -101,14 +106,27 @@ class PCA(BaseEstimator, TransformerMixin):
         self.n_components = n_components
 
     def fit(self, Z, y=None):
-        # TODO
-        raise NotImplementedError
+        Z = np.asarray(Z, dtype=float)
+        self.mean_ = Z.mean(axis=0)
+        _, singular, directions = np.linalg.svd(Z - self.mean_, full_matrices=False)
+        variance = singular ** 2
+        self.explained_variance_ratio_all_ = variance / variance.sum()
+        r = len(singular)
+        if self.n_components is None:
+            k = r
+        elif isinstance(self.n_components, (int, np.integer)) and 1 <= self.n_components <= r:
+            k = int(self.n_components)
+        elif isinstance(self.n_components, (float, np.floating)) and 0 < self.n_components < 1:
+            k = int(np.searchsorted(np.cumsum(self.explained_variance_ratio_all_), self.n_components) + 1)
+        else:
+            raise ValueError("n_components must be None, an integer in [1, rank], or a fraction in (0, 1)")
+        self.n_components_ = k
+        self.components_ = directions[:k]
+        self.explained_variance_ratio_ = self.explained_variance_ratio_all_[:k]
         return self
 
     def transform(self, Z) -> np.ndarray:
-        # TODO
-        raise NotImplementedError
+        return (np.asarray(Z, dtype=float) - self.mean_) @ self.components_.T
 
     def inverse_transform(self, T) -> np.ndarray:
-        # TODO
-        raise NotImplementedError
+        return np.asarray(T, dtype=float) @ self.components_ + self.mean_
