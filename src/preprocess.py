@@ -130,3 +130,46 @@ class PCA(BaseEstimator, TransformerMixin):
 
     def inverse_transform(self, T) -> np.ndarray:
         return np.asarray(T, dtype=float) @ self.components_ + self.mean_
+
+
+def notebook_settings(path=None):
+    """Read saved literal decisions from 02 without executing any notebook code.
+
+    02 is the single source of truth. Save it after editing STANDARDIZE or
+    N_COMPONENTS, then rerun later stages. Reject computed/duplicate settings
+    rather than silently falling back to a different value.
+    """
+    import ast
+    import json
+    from pathlib import Path
+
+    if path is None:
+        path = Path(__file__).resolve().parents[1] / "notebooks" / "02_preprocessing_pca.ipynb"
+    settings = {}
+    for cell in json.loads(Path(path).read_text())["cells"]:
+        if cell["cell_type"] != "code":
+            continue
+        # IPython magic lines are not Python assignments.
+        source = "\n".join(line for line in "".join(cell["source"]).splitlines()
+                           if not line.lstrip().startswith(("%", "!")))
+        for node in ast.parse(source).body:
+            if not isinstance(node, ast.Assign):
+                continue
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id in {"STANDARDIZE", "N_COMPONENTS"}:
+                    if target.id in settings:
+                        raise ValueError(f"Duplicate setting: {target.id}")
+                    settings[target.id] = ast.literal_eval(node.value)
+    if settings.keys() != {"STANDARDIZE", "N_COMPONENTS"}:
+        raise ValueError("02 must define literal STANDARDIZE and N_COMPONENTS settings")
+    if not isinstance(settings["STANDARDIZE"], bool):
+        raise ValueError("STANDARDIZE must be True or False")
+    return settings
+
+
+def make_prep(n_components, standardize=True):
+    """The §9 pipeline, shared by preprocessing and subsequent stages."""
+    from sklearn.pipeline import make_pipeline
+
+    return make_pipeline(DropDuplicateColumns(), Standardizer(with_std=standardize),
+                         PCA(n_components=n_components))
