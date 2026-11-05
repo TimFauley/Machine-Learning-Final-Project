@@ -8,9 +8,10 @@ accelerometer/gyroscope features (561 per window) from 30 subjects performing 6 
 
 ## Layout
 
-- `src/` — shared code: `har_data.py` loads the dataset, `preprocess.py` (duplicate-column removal, standardization, PCA; fit on train only), `plot_style.py` (figure style)
-- `notebooks/` — one notebook per stage, run in order: `01_eda.ipynb`, `02_preprocessing_pca.ipynb`
-- `figures/` — saved figures (PDF + PNG)
+- `src/` — shared code: `har_data.py` loads the dataset, `preprocess.py` (duplicate-column removal, standardization, PCA; fit on train only), `clustering.py` (HW1 K-means and fuzzy C-means, prediction and metrics), `plot_style.py` (figure style)
+- `notebooks/` — one notebook per stage, run in order: `01_eda.ipynb`, `02_preprocessing_pca.ipynb`, `03_clustering.ipynb` (six-activity and moving/still clustering; PCA comparison)
+- `figures/` — saved figures (PDF + PNG) in `eda/`, `preprocessing/`, and `clustering/`
+- `tests/` — synthetic clustering checks, Hungarian matching, and shared preprocessing checks
 - `data/` — dataset (not committed; see below)
 
 ## Setup
@@ -22,3 +23,21 @@ python src/download_data.py        # fetches and unzips the UCI HAR dataset into
 ```
 
 The paper (IEEE format) is kept in a separate private course repository.
+
+## Run the analysis
+
+Open the notebooks from `notebooks/` using the project environment and run them in
+order. Save changes to `STANDARDIZE` and `N_COMPONENTS` in 02 before rerunning 03;
+03 reads those literal settings and rebuilds the shared train-only preprocessing
+pipeline. The current `N_COMPONENTS = 0.95` remains a placeholder.
+
+03 uses ten seeded restarts per algorithm, selects by the training objective, and
+assigns test windows to fixed training centres. Its matched accuracy uses the
+training Hungarian mapping; split-optimal matching is reported separately.
+
+To run the tests:
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest -q
+```
