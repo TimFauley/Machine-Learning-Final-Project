@@ -8,8 +8,8 @@ accelerometer/gyroscope features (561 per window) from 30 subjects performing 6 
 
 ## Layout
 
-- `src/` — model and training code (`har_data.py` loads the dataset)
-- `notebooks/` — EDA and experiments (`01_eda.ipynb`)
+- `src/` — shared code: `har_data.py` loads the dataset, `preprocess.py` (duplicate-column removal, standardization, PCA; fit on train only), `plot_style.py` (figure style)
+- `notebooks/` — one notebook per stage, run in order: `01_eda.ipynb`, `02_preprocessing_pca.ipynb`
 - `figures/` — saved figures (PDF + PNG)
 - `data/` — dataset (not committed; see below)
 
